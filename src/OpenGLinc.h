@@ -1,15 +1,23 @@
 #ifndef OPENGLINC_H
 #define OPENGLINC_H
 
-#if defined(_WIN32)
-#include <gl/glut.h>
-#elif defined(macintosh) || defined(__MACH__) && defined(__APPLE__)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-#else
+// -- Use includes from emscripten-core/emscripten:system/include --
+//#if defined(_WIN32)
+//#include <gl/glut.h>
+//#elif defined(macintosh) || defined(__MACH__) && defined(__APPLE__)
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+//#include <GLUT/glut.h>
+//#else
+//#include <GL/glut.h>
+//#endif
+
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <GL/glut.h>
-#endif
+
+// use stubs to substitute libraries...
+#include "OpenGLStubs.h"
 
 #endif
 

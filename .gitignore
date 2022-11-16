@@ -1,6 +1,2 @@
-src/obj/
-src/vim3d
-vim3d
+build/
 .DS_Store
-src/dump
-dump
