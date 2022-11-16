@@ -16,6 +16,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+// TODO: remove when a suitable solution is found
 // use stubs to substitute libraries...
 #include "OpenGLStubs.h"
 
