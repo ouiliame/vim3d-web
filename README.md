@@ -90,7 +90,7 @@ Make sure you have the following on your system:
 
 ### Building the project
 
-**NOTE:** the original build system relied on [this Makefile](https://github.com/pyramation/vim3d/blob/5486287138bcfb3def4ff608ca898b6228db6397/src/Makefile); we updated it to use CMake.
+## Build
 
 ```bash
 mkdir build
@@ -98,10 +98,3 @@ cd build
 emcmake cmake ..
 emmake make
 ```
-
-To clean up build artifacts, simply remove the `build/` directory.
-
-```bash
-rm -rf build
-```
-
