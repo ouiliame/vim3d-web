@@ -46,7 +46,30 @@ Make sure you have the following on your system:
 
 ### Building the project
 
+## Get the repo
+
+```bash
+git clone https://github.com/ouiliame/vim3d-web
+cd vim3d-web
+```
+
+We use `gl4es` which is a submodule. After the above, do:
+
+```bash
+git submodule update --init --recursive
+```
+
+Then build the `libGL` library.
+
+```bash 
+(cd gl4es && rm -rf build; mkdir build; cd build; emcmake cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DNOX11=ON -DNOEGL=ON -DSTATICLIB=ON; make)
+```
+
+Now you should have `gl4es/lib/libGL.a` in your project, which is required.
+
 ## Build
+
+
 
 ```bash
 make build
@@ -62,89 +85,72 @@ make run
 
 ## Implementing Unsupported Symbols
 
+### Using `gl4es`
+
+We use `gl4es` instead of the default Emscripten bundled `libGL`.
+
+Notice the following:
+
+#### src/OpenGLinc.h
+
+```cpp
+#ifndef OPENGLINC_H
+#define OPENGLINC_H
+
+#include <gl4esinit.h> // include extra
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#include "custom_gl/glut.h"
+
+#endif
+```
+#### src/main.cpp
+
+```cpp
+#include "Scene.h"
+
+int main(int argc, char* argv[]) {
+    initialize_gl4es(); // need to call this before any GL calls!
+    Scene *scene = new Scene();
+    scene->go(argc, argv);
+    delete scene;
+    return 0;
+}
+
+```
+
+### Providing unsupported GLUT functions
+
 We modify `src/OpenGLinc.h` to use local headers in `src/custom_gl/` forked from [emscripten-core](https://github.com/emscripten-core/emscripten).
 
-- `<GL/gl.h>` -> `"custom_gl/gl.h"`
-- `<GL/glu.h>` -> `"custom_gl/glu.h"`
 - `<GL/glut.h>` -> `"custom_gl/glut.h"` (actual stuff is imported from `freeglut_std.h`.
 
-First we need to redefine part of headers.
+The following functions need to be provided, as they aren't included:
 
-### `gl.h`
+#### src/custom_gl/glu.cpp
 
-Implementation is in `src/custom_gl/gl.cpp`.
+```cpp
+GLAPI GLint GLAPIENTRY gluBuild1DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLenum format, GLenum type, const void *data);
 
-Define `XGLAPI` to demarcate stuff we'll override.
+GLAPI GLint GLAPIENTRY gluBuild2DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *data); 
 
-Then, we tagged the following:
 
-```c
-...
-#define XGLAPI /* nothing */
+GLAPI void GLAPIENTRY gluOrtho2D (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
 
-XGLAPI void GLAPIENTRY glPointSize( GLfloat size );
-XGLAPI void GLAPIENTRY glPolygonMode( GLenum face, GLenum mode );
-XGLAPI void GLAPIENTRY glGetDoublev( GLenum pname, GLdouble *params );
-XGLAPI void GLAPIENTRY glPushAttrib( GLbitfield mask );
-XGLAPI void GLAPIENTRY glPopAttrib( void );
-XGLAPI void GLAPIENTRY glPushMatrix( void );
-XGLAPI void GLAPIENTRY glPopMatrix( void );
-XGLAPI void GLAPIENTRY glMultMatrixf( const GLfloat *m );
-XGLAPI void GLAPIENTRY glRotatef( GLfloat angle, GLfloat x, GLfloat y, GLfloat z );
-XGLAPI void GLAPIENTRY glTranslatef( GLfloat x, GLfloat y, GLfloat z );
-XGLAPI void GLAPIENTRY glDeleteLists( GLuint list, GLsizei range );
-XGLAPI GLuint GLAPIENTRY glGenLists( GLsizei range );
-XGLAPI void GLAPIENTRY glNewList( GLuint list, GLenum mode );
-XGLAPI void GLAPIENTRY glEndList( void );
-XGLAPI void GLAPIENTRY glCallList( GLuint list );
-XGLAPI void GLAPIENTRY glCallLists( GLsizei n, GLenum type, const GLvoid *lists );
-XGLAPI void GLAPIENTRY glEnd( void );
-XGLAPI void GLAPIENTRY glVertex2f( GLfloat x, GLfloat y );
-XGLAPI void GLAPIENTRY glVertex3f( GLfloat x, GLfloat y, GLfloat z );
-XGLAPI void GLAPIENTRY glNormal3f( GLfloat nx, GLfloat ny, GLfloat nz );
-XGLAPI void GLAPIENTRY glColor3d( GLdouble red, GLdouble green, GLdouble blue );
-XGLAPI void GLAPIENTRY glColor3f( GLfloat red, GLfloat green, GLfloat blue );
-XGLAPI void GLAPIENTRY glColor3i( GLint red, GLint green, GLint blue );
-XGLAPI void GLAPIENTRY glTexCoord3f( GLfloat s, GLfloat t, GLfloat r );
-XGLAPI void GLAPIENTRY glRasterPos2f( GLfloat x, GLfloat y );
-XGLAPI void GLAPIENTRY glRasterPos3f( GLfloat x, GLfloat y, GLfloat z );
-XGLAPI void GLAPIENTRY glShadeModel( GLenum mode );
-XGLAPI void GLAPIENTRY glLightf( GLenum light, GLenum pname, GLfloat param );
-XGLAPI void GLAPIENTRY glLightfv( GLenum light, GLenum pname, const GLfloat *params );
-XGLAPI void GLAPIENTRY glMaterialf( GLenum face, GLenum pname, GLfloat param );
-XGLAPI void GLAPIENTRY glMaterialfv( GLenum face, GLenum pname, const GLfloat *params );
-XGLAPI void GLAPIENTRY glPixelZoom( GLfloat xfactor, GLfloat yfactor );
-XGLAPI void GLAPIENTRY glTexEnvf( GLenum target, GLenum pname, GLfloat param );
+GLAPI void GLAPIENTRY gluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
+GLAPI GLint GLAPIENTRY gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ);
 ```
 
-### `glu.h`
+#### src/freeglut_std.<h/cpp>
 
-Implementation is in `src/custom_gl/glu.cpp`.
+```cpp
+FGAPI void FGAPIENTRY glutBitmapCharacter(void *_font, int character);
 
-```c
-...
-#define XGLAPI /* nothing */
+FGAPI void FGAPIENTRY glutSolidSphere(GLdouble radius, GLint slices, GLint stacks);
 
-XGLAPI GLint GLAPIENTRY gluBuild1DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLenum format, GLenum type, const void *data);
-XGLAPI GLint GLAPIENTRY gluBuild2DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *data);
-XGLAPI void GLAPIENTRY gluOrtho2D (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-XGLAPI void GLAPIENTRY gluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-XGLAPI GLint GLAPIENTRY gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ);
-```
+FGAPI void FGAPIENTRY glutWireCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
 
-### `glut.h` (actually `freeglut_std.h`)
-
-Implementation is in `src/custom_gl/freeglut_std.cpp`.
-
-Use `XFGAPI` to demarcate stuff we'll be overriding.
-
-```c
-...
-#define XFGAPI /* nothing */
-
-XFGAPI void    FGAPIENTRY glutBitmapCharacter( void* font, int character );
-XFGAPI void    FGAPIENTRY glutSolidSphere( GLdouble radius, GLint slices, GLint stacks );
-XFGAPI void    FGAPIENTRY glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
-XFGAPI void    FGAPIENTRY glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
+FGAPI void FGAPIENTRY glutSolidCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
 ```
