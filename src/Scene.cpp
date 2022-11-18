@@ -821,7 +821,7 @@ int Scene::go(int argc, char* argv[]) {
     } else
         loadScene((char *) "scene1");
 
-    glutDisplayFunc(display);
+    // glutDisplayFunc(display);
     glutSpecialFunc(specialKey);
     timerFunc(0);
     glutKeyboardFunc(keyboard);

@@ -1,6 +1,96 @@
-# vim3d
+# vim3d: Browser Edition
 
-## Build
+**NOTE: CURRENTLY A WORK IN PROGRESS!**
+
+We're trying to bring [vim3d](https://vim3d.com) to the web!
+
+This repository contains the web port of Dan Lynch's [vim3d](https://github.com/pyramation/vim3d), forked off the original repo. 
+
+## Porting Strategy
+
+Since vim3d was written with C++ and OpenGL, our plan is to use [Emscripten](https://emscripten.org) to compile it to WebAssembly and run it in the browser.
+
+However, we will need to resolve a couple challenges:
+
+- **Unsupported OpenGL functions**
+
+  The original code uses some OpenGL functions which aren't available on Emscripten, which only supports the OpenGL ES subset.
+
+
+## Tasks
+
+- [x] replace build system with CMake
+
+Undefined symbols:
+
+- [x] glCallList
+- [ ] glColor3d 
+- [ ] glColor3f
+- [ ] glColor3i
+- [ ] glDeleteLists
+- [ ] glEnd
+- [ ] glEndList
+- [ ] glGenLists
+- [ ] glGetDoublev
+- [ ] glLightf
+- [ ] glLightfv
+- [ ] glMaterialf
+- [ ] glMaterialfv
+- [ ] glMultMatrixf
+- [ ] glNewList
+- [ ] glNormal3f
+- [ ] glPixelZoom
+- [ ] glPointSize
+- [ ] glPolygonMode
+- [ ] glPopAttrib
+- [ ] glPopMatrix
+- [ ] glPushAttrib
+- [ ] glPushMatrix
+- [ ] glRasterPos2f
+- [ ] glRasterPos3f
+- [ ] glRotatef
+- [ ] glShadeModel
+- [ ] glTexCoord3f
+- [ ] glTexEnvf
+- [ ] glTranslatef
+- [ ] glVertex2f
+- [ ] glVertex3f
+- [ ] gluBuild2DMipmaps
+- [ ] gluOrtho2D
+- [ ] gluPerspective
+- [ ] gluUnProject
+- [ ] glutBitmapCharacter
+- [ ] glutSolidCone
+- [ ] glutSolidSphere
+- [ ] glutWireCone
+
+
+## Development
+
+### Requirements
+
+To build this project, you will need to install the [Emscripten toolchain](https://emscripten.org/docs/getting_started/downloads.html).
+
+Once installed, you should be able to use `emcc`.  
+
+```bash
+$ emcc -v
+
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.24-git
+clang version 16.0.0 (https://github.com/llvm/llvm-project.git 277c382760bf9575cfa2eac73d5ad1db91466d3f)
+Target: wasm32-unknown-emscripten
+Thread model: posix
+InstalledDir: /opt/homebrew/Cellar/emscripten/3.1.24/libexec/llvm/bin
+```
+
+Make sure you have the following on your system:
+
+- `cmake`
+- `make`
+
+### Building the project
+
+**NOTE:** the original build system relied on [this Makefile](https://github.com/pyramation/vim3d/blob/5486287138bcfb3def4ff608ca898b6228db6397/src/Makefile); we updated it to use CMake.
 
 ```bash
 mkdir build
@@ -9,16 +99,9 @@ emcmake cmake ..
 emmake make
 ```
 
-## Using Docker
-
-### Build Docker image
+To clean up build artifacts, simply remove the `build/` directory.
 
 ```bash
-docker build -f Dockerfile -t clion/emscripten .
+rm -rf build
 ```
 
-### Run
-
-```bash
-docker run -d --cap-add sys_ptrace -p127.0.0.1:2222:22 --name clion_emscripten clion/emscripten
-```

@@ -12,12 +12,9 @@
 //#include <GL/glut.h>
 //#endif
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
-
-// use stubs to substitute libraries...
-#include "OpenGLStubs.h"
+#include "custom_gl/gl.h"
+#include "custom_gl/glu.h"
+#include "custom_gl/glut.h"
 
 #endif
 
