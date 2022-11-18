@@ -70,7 +70,11 @@
 
         /* Link with Win32 static freeglut lib */
 #       if FREEGLUT_LIB_PRAGMAS
-#           pragma comment (lib, "freeglut_static.lib")
+#           ifdef NDEBUG
+#              pragma comment (lib, "freeglut_static.lib")
+#           else
+#              pragma comment (lib, "freeglut_staticd.lib")
+#           endif
 #       endif
 
 /* Windows shared library (DLL) */
@@ -84,7 +88,11 @@
 
             /* Link with Win32 shared freeglut lib */
 #           if FREEGLUT_LIB_PRAGMAS
-#               pragma comment (lib, "freeglut.lib")
+#               ifdef NDEBUG
+#                   pragma comment (lib, "freeglut.lib")
+#               else
+#                   pragma comment (lib, "freeglutd.lib")
+#               endif
 #           endif
 
 #       endif
@@ -105,7 +113,6 @@
 /* Non-Windows definition of FGAPI and FGAPIENTRY  */
 #        define FGAPI
 #        define FGAPIENTRY
-#        define XFGAPI
 
 #endif
 
@@ -114,14 +121,33 @@
  */
 #define  FREEGLUT             1
 #define  GLUT_API_VERSION     4
-#define  FREEGLUT_VERSION_2_0 1
 #define  GLUT_XLIB_IMPLEMENTATION 13
+/* Deprecated:
+   cf. http://sourceforge.net/mailarchive/forum.php?thread_name=CABcAi1hw7cr4xtigckaGXB5X8wddLfMcbA_rZ3NAuwMrX_zmsw%40mail.gmail.com&forum_name=freeglut-developer */
+#define  FREEGLUT_VERSION_2_0 1
 
 /*
  * Always include OpenGL and GLU headers
  */
-#include <GL/gl.h>
-#include <GL/glu.h>
+/* Note: FREEGLUT_GLES1 and FREEGLUT_GLES2 are only used to cleanly
+   bootstrap headers inclusion here; use GLES constants directly
+   (e.g. GL_ES_VERSION_2_0) for all other needs */
+#ifdef FREEGLUT_REGAL
+#   include <GL/Regal.h>
+#   include <GL/RegalGLU.h>
+#elif FREEGLUT_GLES2
+#   include <EGL/egl.h>
+#   include <GLES2/gl2.h>
+#elif FREEGLUT_GLES1
+#   include <EGL/egl.h>
+#   include <GLES/gl.h>
+#elif __APPLE__
+#   include <OpenGL/gl.h>
+#   include <OpenGL/glu.h>
+#else
+#   include <GL/gl.h>
+#   include <GL/glu.h>
+#endif
 
 /*
  * GLUT API macro definitions -- the special key codes:
@@ -192,8 +218,6 @@
  *
  * Steve Baker suggested to make it binary compatible with GLUT:
  */
-
-// WNOTE: Removed condition
 // #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WATCOMC__)
 #   define  GLUT_STROKE_ROMAN               ((void *)0x0000)
 #   define  GLUT_STROKE_MONO_ROMAN          ((void *)0x0001)
@@ -205,19 +229,18 @@
 #   define  GLUT_BITMAP_HELVETICA_12        ((void *)0x0007)
 #   define  GLUT_BITMAP_HELVETICA_18        ((void *)0x0008)
 // #else
-
-    // /*
-    //  * I don't really know if it's a good idea... But here it goes:
-    //  */
-    // extern void* glutStrokeRoman;
-    // extern void* glutStrokeMonoRoman;
-    // extern void* glutBitmap9By15;
-    // extern void* glutBitmap8By13;
-    // extern void* glutBitmapTimesRoman10;
-    // extern void* glutBitmapTimesRoman24;
-    // extern void* glutBitmapHelvetica10;
-    // extern void* glutBitmapHelvetica12;
-    // extern void* glutBitmapHelvetica18;
+    /*
+     * I don't really know if it's a good idea... But here it goes:
+     */
+//     extern void* glutStrokeRoman;
+//     extern void* glutStrokeMonoRoman;
+//     extern void* glutBitmap9By15;
+//     extern void* glutBitmap8By13;
+//     extern void* glutBitmapTimesRoman10;
+//     extern void* glutBitmapTimesRoman24;
+//     extern void* glutBitmapHelvetica10;
+//     extern void* glutBitmapHelvetica12;
+//     extern void* glutBitmapHelvetica18;
 
 //     /*
 //      * Those pointers will be used by following definitions:
@@ -389,7 +412,6 @@
 #define  GLUT_GAME_MODE_REFRESH_RATE        0x0005
 #define  GLUT_GAME_MODE_DISPLAY_CHANGED     0x0006
 
-
 /*
  * Initialization functions, see fglut_init.c
  */
@@ -508,7 +530,7 @@ FGAPI int     FGAPIENTRY glutLayerGet( GLenum query );
 /*
  * Font stuff, see freeglut_font.c
  */
-XFGAPI void    FGAPIENTRY glutBitmapCharacter( void* font, int character );
+FGAPI void    FGAPIENTRY glutBitmapCharacter( void* font, int character );
 FGAPI int     FGAPIENTRY glutBitmapWidth( void* font, int character );
 FGAPI void    FGAPIENTRY glutStrokeCharacter( void* font, int character );
 FGAPI int     FGAPIENTRY glutStrokeWidth( void* font, int character );
@@ -518,15 +540,15 @@ FGAPI int     FGAPIENTRY glutStrokeLength( void* font, const unsigned char* stri
 /*
  * Geometry functions, see freeglut_geometry.c
  */
-FGAPI void    FGAPIENTRY glutWireCube( GLdouble size );
-FGAPI void    FGAPIENTRY glutSolidCube( GLdouble size );
-FGAPI void    FGAPIENTRY glutWireSphere( GLdouble radius, GLint slices, GLint stacks );
-XFGAPI void    FGAPIENTRY glutSolidSphere( GLdouble radius, GLint slices, GLint stacks );
-XFGAPI void    FGAPIENTRY glutWireCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
-XFGAPI void    FGAPIENTRY glutSolidCone( GLdouble base, GLdouble height, GLint slices, GLint stacks );
 
-FGAPI void    FGAPIENTRY glutWireTorus( GLdouble innerRadius, GLdouble outerRadius, GLint sides, GLint rings );
-FGAPI void    FGAPIENTRY glutSolidTorus( GLdouble innerRadius, GLdouble outerRadius, GLint sides, GLint rings );
+FGAPI void    FGAPIENTRY glutWireCube( double size );
+FGAPI void    FGAPIENTRY glutSolidCube( double size );
+FGAPI void    FGAPIENTRY glutWireSphere( double radius, GLint slices, GLint stacks );
+FGAPI void    FGAPIENTRY glutSolidSphere( double radius, GLint slices, GLint stacks );
+FGAPI void    FGAPIENTRY glutWireCone( double base, double height, GLint slices, GLint stacks );
+FGAPI void    FGAPIENTRY glutSolidCone( double base, double height, GLint slices, GLint stacks );
+FGAPI void    FGAPIENTRY glutWireTorus( double innerRadius, double outerRadius, GLint sides, GLint rings );
+FGAPI void    FGAPIENTRY glutSolidTorus( double innerRadius, double outerRadius, GLint sides, GLint rings );
 FGAPI void    FGAPIENTRY glutWireDodecahedron( void );
 FGAPI void    FGAPIENTRY glutSolidDodecahedron( void );
 FGAPI void    FGAPIENTRY glutWireOctahedron( void );
@@ -538,9 +560,10 @@ FGAPI void    FGAPIENTRY glutSolidIcosahedron( void );
 
 /*
  * Teapot rendering functions, found in freeglut_teapot.c
+ * NB: front facing polygons have clockwise winding, not counter clockwise
  */
-FGAPI void    FGAPIENTRY glutWireTeapot( GLdouble size );
-FGAPI void    FGAPIENTRY glutSolidTeapot( GLdouble size );
+FGAPI void    FGAPIENTRY glutWireTeapot( double size );
+FGAPI void    FGAPIENTRY glutSolidTeapot( double size );
 
 /*
  * Game mode functions, see freeglut_gamemode.c

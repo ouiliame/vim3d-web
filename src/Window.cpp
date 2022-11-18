@@ -150,7 +150,7 @@ void Window::display() {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         if (cam != NULL) {
-            //- gluPerspective(cam->fovy, (GLdouble)w/(GLdouble)h, cam->zNear, cam->zFar);
+            gluPerspective(cam->fovy, (GLdouble)w/(GLdouble)h, cam->zNear, cam->zFar);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
@@ -169,7 +169,7 @@ void Window::display() {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
-        //- gluOrtho2D(x,x+w,y,y+h);
+        gluOrtho2D(x,x+w,y,y+h);
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();

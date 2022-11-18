@@ -69,6 +69,10 @@
     "algorithm": "cpp",
     "functional": "cpp",
     "iterator": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "freeglut_std.h": "c",
+    "freeglut_ext.h": "c",
+    "gluos.h": "c",
+    "gluint.h": "c"
   }
 }
