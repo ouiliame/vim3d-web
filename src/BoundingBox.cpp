@@ -120,7 +120,7 @@ void BoundingBox::display() {
     glVertex3f(min.x, max.y, max.z); glVertex3f(max.x, max.y, max.z);
     glVertex3f(max.x, max.y, max.z); glVertex3f(max.x, min.y, max.z);
     glVertex3f(max.x, max.y, min.z); glVertex3f(max.x, min.y, min.z);
-    glEnd();
+    //-- glEnd();
     Scene::toggleLights(true);
 }
 

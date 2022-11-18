@@ -174,15 +174,15 @@ void Window::display() {
         glLineWidth(3.0f);
         for(unsigned int i=0;i<allOBJS.size();i++) {
             if (isChannel(allOBJS[i]) && CH(allOBJS[i])->enabled) {
-                //glColor3f(float((i+1) & 4), float((i+1) & 2), float((i+1) & 1));
+                //// WEDITED glColor3f(float((i+1) & 4), float((i+1) & 2), float((i+1) & 1));
                 float r = float((i+1) & 4); float g = float((i+1) & 2); float b= float((i+1) & 1);
                 if (! bool(r+g+b) ) r = g = b = 1;
-                glColor3f(r,g,b);
+                // WEDITED glColor3f(r,g,b);
                 CH(allOBJS[i])->display(x,y,w,h,scopeB, scopeAmountx, scopeAmounty);
             }
         }
         glLineWidth(1.0f);
-        glColor3f(1.0f,1.0f,1.0f);
+        // WEDITED glColor3f(1.0f,1.0f,1.0f);
 
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();

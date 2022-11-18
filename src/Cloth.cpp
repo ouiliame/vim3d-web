@@ -374,7 +374,7 @@ void Poly::curveMe(Geo * crossSec) {
 void Poly::readFile(String filename) { readOBJ(filename); }
 
 void Poly::visualizePoints() {
-    glColor3f(0.0f,1.0f,1.0f);
+    // WEDITED glColor3f(0.0f,1.0f,1.0f);
     for(unsigned int i=0; i<faces.size();i++) {
         if (faces[i].ni.size() > 0) {
             Scene::toggleLights(false);
@@ -388,7 +388,7 @@ void Poly::visualizePoints() {
                         glVertex3f( vertices[faces[i].vi[j]-1].x, vertices[faces[i].vi[j]-1].y, vertices[faces[i].vi[j]-1].z);     
                         glVertex3f( normals[faces[i].ni[0]-1].x + vertices[faces[i].vi[j]-1].x, normals[faces[i].ni[0]-1].y + vertices[faces[i].vi[j]-1].y, normals[faces[i].ni[0]-1].z + vertices[faces[i].vi[j]-1].z);
                     }
-                    glEnd();
+                    //-- glEnd();
                 }
                 if (curSTATE & POINT_NUMS) {
                     glRasterPos3f( vertices[faces[i].vi[j]-1].x, vertices[faces[i].vi[j]-1].y, vertices[faces[i].vi[j]-1].z);
@@ -403,7 +403,7 @@ void Poly::visualizePoints() {
             Scene::toggleLights(true);
         }
     }
-    glColor3f(1.0f,1.0f,1.0f);
+    // WEDITED glColor3f(1.0f,1.0f,1.0f);
 }
 
 // these normals will be transormed by the model matrix in a way that is no good.
@@ -427,13 +427,13 @@ void Poly::visualizeFaces() {
         }
         Normal norm(cx+nx, cy+ny, cz+nz);
         Scene::toggleLights(false);
-        glColor3f(1.0f,0.0f,1.0f);
+        // WEDITED glColor3f(1.0f,0.0f,1.0f);
 
         if (curSTATE & FACE_NORMALS) { 
             glBegin(GL_LINES);
             glVertex3f(cx, cy, cz);
             glVertex3f(norm.x, norm.y, norm.z);
-            glEnd(); 
+            //-- glEnd(); 
         }
 
         if (curSTATE & FACE_NUMS) {
@@ -447,7 +447,7 @@ void Poly::visualizeFaces() {
         }
 
         Scene::toggleLights(true);
-        glColor3f(1.0f,1.0f,1.0f);
+        // WEDITED glColor3f(1.0f,1.0f,1.0f);
     }
 
 }
@@ -467,7 +467,7 @@ void Poly::bounds() {
     glVertex3f(minX, maxY, maxZ); glVertex3f(maxX, maxY, maxZ);
     glVertex3f(maxX, maxY, maxZ); glVertex3f(maxX, minY, maxZ);
     glVertex3f(maxX, maxY, minZ); glVertex3f(maxX, minY, minZ);
-    glEnd();
+    //-- glEnd();
     Scene::toggleLights(true);
 }
 
@@ -520,7 +520,7 @@ void Poly::displayGeometry() {
                         glVertex3f(vertices[faces[f].vi[v]-1].x, vertices[faces[f].vi[v]-1].y, vertices[faces[f].vi[v]-1].z);
                 }
 
-                glEnd();
+                //-- glEnd();
             }
 
         } else {
@@ -532,14 +532,14 @@ void Poly::displayGeometry() {
                     glVertex3f(vertices[p].x, vertices[p].y, vertices[p].z);
                     glVertex3f(vertices[p+1].x, vertices[p+1].y, vertices[p+1].z);
                 }
-                glEnd();
+                //-- glEnd();
                 Scene::toggleLights(true);
             }
         }
         
 
         if (curSTATE & DISPLAY_LIST) {
-            glEndList();
+            //-- glEndList();
             displayListLoaded = true;
             glCallList(listIndex);
         }
@@ -550,7 +550,7 @@ void Poly::displayGeometry() {
 void Poly::freeList() {
     if (displayListLoaded) {
         displayListLoaded = false;
-        glDeleteLists(listIndex, 1);
+        //-- glDeleteLists(listIndex, 1);
     }
 }
 

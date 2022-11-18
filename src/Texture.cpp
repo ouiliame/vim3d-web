@@ -113,7 +113,7 @@ void Texture::EnableBind() {
     //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE) ;
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE) ;
     glBindTexture(GL_TEXTURE_2D, texName) ;
-    //glColor3f(0.0,0.0,0.0) ;
+    //// WEDITED glColor3f(0.0,0.0,0.0) ;
     //err = glGetError() ; assert(err == GL_NO_ERROR) ;
 }
 

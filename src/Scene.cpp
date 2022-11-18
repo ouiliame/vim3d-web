@@ -658,7 +658,7 @@ void Scene::showScene() {
     if (curSTATE & SHOW_AXIS) Scene::axis();
     Scene::printCurves();
     Scene::displayObjects();
-    glColor3f(1.0,1.0,1.0);
+    // WEDITED glColor3f(1.0,1.0,1.0);
 }
 
 //Display
@@ -706,7 +706,8 @@ void Scene::printOutput(String &buffer, float w, float h) {
             newLine+=15;
             glRasterPos2f(w,h-newLine);                 
         } else {
-            glutBitmapCharacter(GLUT_BITMAP_8_BY_13,*s);
+            // WEDITED
+            // glutBitmapCharacter(GLUT_BITMAP_8_BY_13,*s);
         }
     }
 
@@ -717,41 +718,45 @@ void Scene::printTerminal() {
     glBegin(GL_LINES);
     glVertex2f(0,17);
     glVertex2f(w,17);
-    glEnd();
+    //-- glEnd();
 
-    glColor3f(bgcolor[0], bgcolor[1], bgcolor[2]);
+    // WEDITED glColor3f(bgcolor[0], bgcolor[1], bgcolor[2]);
 
     glBegin(GL_QUADS);
     glVertex2f(0.0f, 0.0f); glVertex2f(w, 0.0f); glVertex2f(w, 17.0f); glVertex2f(0.0f, 17.0f);
-    glEnd();
-    glColor3f(textcolor[0], textcolor[1], textcolor[2]);
+    //-- glEnd();
+    // WEDITED glColor3f(textcolor[0], textcolor[1], textcolor[2]);
     if (Term::buffer.size() > 0) {
         glRasterPos3f(0,5,0);
         const char *s = Term::buffer.c_str();
-        for(unsigned int j=0;j<Term::buffer.size(); j++,s++)
-            glutBitmapCharacter(GLUT_BITMAP_8_BY_13,*s);
+        // WEDITED
+        // for(unsigned int j=0;j<Term::buffer.size(); j++,s++)
+        //     glutBitmapCharacter(GLUT_BITMAP_8_BY_13,*s);
 
     }   
 }
 
 void Scene::printCurves() {
     Scene::toggleLights(false);
-    glColor3f(1.0,1.0,1.0);
+    // WEDITED glColor3f(1.0,1.0,1.0);
 
     /* emulate this in animation too */
     if (((ivMODE&INSERT_MODE) || (ivMODE&EDIT_MODE)) && curve)  {
         if (drawMODE&NO_INTERP) curve->noInterpolation();
         if (drawMODE&BEZIER_INTERP) {
             curve->Bezier(curve->points.size()+5);
-            glColor3f(0.2,0.2,0.2);
+            // WEDITED glColor3f(0.2,0.2,0.2);
             curve->noInterpolation();
-            glColor3d(1,1,1);
+            // WEDITED
+            // glColor3d(1,1,1);
         }
         if (drawMODE&BSPLINE_INTERP) {
             curve->Bspline(5);
-            glColor3f(0.2,0.2,0.2);
+            // WEDITED
+            // // WEDITED glColor3f(0.2,0.2,0.2);
             curve->noInterpolation();
-            glColor3d(1,1,1);
+            // WEDITED
+            // glColor3d(1,1,1);
         }
         curve->printPoints();
         if (ivMODE&EDIT_MODE) curve->EditHandle();
@@ -766,7 +771,7 @@ void Scene::constructionPlane() {
 
     toggleLights(false);
     glLineWidth(1.0) ;
-    glColor3f(gridcolor[0], gridcolor[1], gridcolor[2]);
+    // WEDITED glColor3f(gridcolor[0], gridcolor[1], gridcolor[2]);
     glBegin(GL_LINES);
     for (int i=-gridSize;i<=gridSize;i+=gridStep) {
         glVertex3f(-gridSize,0,i);
@@ -774,7 +779,7 @@ void Scene::constructionPlane() {
         glVertex3f(i,0,-gridSize);
         glVertex3f(i,0,gridSize);
     }
-    glEnd();
+    //-- glEnd();
     toggleLights(true);
 }
 
@@ -785,25 +790,28 @@ void Scene::axis() {
     glLineWidth(3.0);
 
     glBegin(GL_LINES);
-    glColor3f(1.0f,0.0f,0.0f);
+    // WEDITED glColor3f(1.0f,0.0f,0.0f);
     glVertex3f(0.0f,0.0f,0.0f);
     glVertex3f(0.0f,0.0f,gridStep*1.0f);
-    glColor3f(0.0f,1.0f,0.0f);
+    // WEDITED glColor3f(0.0f,1.0f,0.0f);
     glVertex3f(0.0f,0.0f,0.0f);
     glVertex3f(0.0f,gridStep*1.0f,0.0f);
-    glColor3f(0.0f,0.0f,1.0f);
+    // WEDITED glColor3f(0.0f,0.0f,1.0f);
     glVertex3f(0.0f,0.0f,0.0f);
     glVertex3f(gridStep*1.0f,0.0f,0.0f);
-    glEnd();   
+    //-- glEnd();   
     /* label */
     glLineWidth(1.0);
-    glColor3f(1.0,1.0,1.0);
+    // WEDITED glColor3f(1.0,1.0,1.0);
     glRasterPos3f(gridStep*1.2f,0.0f,0.0f);
-    glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'x');
+    // WEDITED
+    // glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'x');
     glRasterPos3f(0.0f,gridStep*1.2f,0.0f);
-    glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'y');
+    // WEDITED
+    // glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'y');
     glRasterPos3f(0.0f,0.0f,gridStep*1.2f);
-    glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'z');
+    // WEDITED
+    // glutBitmapCharacter(GLUT_BITMAP_8_BY_13,'z');
     Scene::toggleLights(true);
 }
 

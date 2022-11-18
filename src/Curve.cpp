@@ -178,18 +178,18 @@ Curve::Curve( vector <Point> pts ) {
 void Curve::axis(){
     float scale = 10.0;
     glBegin(GL_LINES);
-    glColor3f(1.0,0.0,0.0);
+    // // WEDITED glColor3f(1.0,0.0,0.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(scale,0.0,0.0);
-    glColor3f(0.0,1.0,0.0);
+    // // WEDITED glColor3f(0.0,1.0,0.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(0.0,scale,0.0);
 
-    glColor3f(0.0,0.0,1.0);
+    // // WEDITED glColor3f(0.0,0.0,1.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(0.0,0.0,scale);
-    glEnd();
-    glColor3f(1.0,1.0,1.0);
+    //-- glEnd();
+    // // WEDITED glColor3f(1.0,1.0,1.0);
 }
 
 void Curve::EditHandle() {
@@ -215,7 +215,7 @@ void Curve::printCurve() {
             glVertex3f( a->x, a->y, a->z );
             glVertex3f( b->x, b->y, b->z );
         }
-        glEnd();
+        //-- glEnd();
     }
 }
 
@@ -235,7 +235,7 @@ void Curve::printPoints() {
         for(a = points.begin(); a != points.end(); a++) {
             glVertex3f( a->x, a->y, a->z );
         }
-        glEnd();
+        //-- glEnd();
         glPointSize(1.0f);
     }
 }
@@ -249,7 +249,7 @@ void Curve::printCurve(point_t p) {
             glVertex3f( a->x, a->y, a->z );
             glVertex3f( b->x, b->y, b->z );
         }
-        glEnd();
+        //-- glEnd();
     }
 }
 Point lerp(Point p, Point n, float t) {

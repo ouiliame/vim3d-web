@@ -12,13 +12,19 @@
 //#include <GL/glut.h>
 //#endif
 
+#ifndef USE_CUSTOM_GL
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-// TODO: remove when a suitable solution is found
-// use stubs to substitute libraries...
-#include "OpenGLStubs.h"
+#else
+
+#include "custom_gl/gl.h"
+#include "custom_gl/glu.h"
+#include "custom_gl/glut.h"
+
+#endif
 
 #endif
 

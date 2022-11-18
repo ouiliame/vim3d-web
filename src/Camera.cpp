@@ -112,21 +112,24 @@ void Camera::display() {
 void Camera::axis(){
     glLineWidth(3.0) ;
     glBegin(GL_LINES);
-    glColor3f(1.0,0.0,0.0);
+    // WEDITED
+    // // WEDITED glColor3f(1.0,0.0,0.0);
     glVertex3f(eye.x,eye.y,eye.z);
     //glVertex3f(eye.x+u.x, eye.y+u.y, eye.z+u.z);
     glVertex3f(eye.x+1, eye.y, eye.z);
 
-    glColor3f(0.0,1.0,0.0);
+    // WEDITED
+    // // WEDITED glColor3f(0.0,1.0,0.0);
     glVertex3f(eye.x,eye.y,eye.z);
     //glVertex3f(eye.x+v.x, eye.y+v.y, eye.z+v.z);
     glVertex3f(eye.x, eye.y+1, eye.z);
 
-    glColor3f(0.0,0.0,1.0);
+    // WEDITED
+    // // WEDITED glColor3f(0.0,0.0,1.0);
     glVertex3f(eye.x,eye.y,eye.z);
     //glVertex3f(eye.x+w.x, eye.y+w.y, eye.z+w.z);
     glVertex3f(eye.x, eye.y, eye.z+1);
-    glEnd();
+    //-- glEnd();
 }
 
 // zoom

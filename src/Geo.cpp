@@ -62,7 +62,7 @@ void Geo::bounds() {
     glVertex3f(minX, maxY, maxZ); glVertex3f(maxX, maxY, maxZ);
     glVertex3f(maxX, maxY, maxZ); glVertex3f(maxX, minY, maxZ);
     glVertex3f(maxX, maxY, minZ); glVertex3f(maxX, minY, minZ);
-    glEnd();
+    //-- glEnd();
     Scene::toggleLights(true);
 }
 
@@ -229,7 +229,7 @@ void Geo::display() {
 
     glPopMatrix();
     glPopAttrib();
-    glColor3f(1.0,1.0,1.0);
+    // WEDITED glColor3f(1.0,1.0,1.0);
 
 }
 

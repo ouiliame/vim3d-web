@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/emscripten/system/include",
+                "${workspaceFolder}/emscripten/system/lib/libcxx/include",
+                "${workspaceFolder}/emscripten/system/lib/libc/musl/include",
+                "${workspaceFolder}/emscripten/system/lib/libc/musl/arch/emscripten",
+                "${workspaceFolder}/emscripten/system/lib/libc/musl/arch/generic"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "${workspaceFolder}/emscripten/emcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64"
+        }
+    ],
+    "version": 4
+}

@@ -71,7 +71,7 @@ void Light::display() {
     /* display purposes */
     if (((curSTATE & LIGHTS_DISP) || active) && (curSTATE & SHOW_SELECT)) {
         glPushMatrix();
-        glColor3f(diffuse[0],diffuse[1],diffuse[2]);
+        // WEDITED glColor3f(diffuse[0],diffuse[1],diffuse[2]);
         //glMultMatrixf(M.mat_array);
         
         glRotatef(90,0,1,0);
@@ -79,7 +79,7 @@ void Light::display() {
         glPushAttrib(GL_LIGHTING_BIT);
         Scene::toggleLights(false);
         if (active&&ltype!=L_POINT) glutWireCone(4.0f, 6.0f, 15, 15);
-        glColor3f(specular[0], specular[1], specular[2]);
+        // WEDITED glColor3f(specular[0], specular[1], specular[2]);
         glutSolidSphere(3.0f, 15,15);
         Scene::toggleLights(true);
         glPopAttrib();

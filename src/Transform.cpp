@@ -40,7 +40,7 @@ void Transform::rodriguez_rotate(float degrees, Point&eye, Point&up) {
 }
 
 void drawArrow(Point v) {
-    glColor3f(1.0,1.0,1.0);
+    // WEDITED glColor3f(1.0,1.0,1.0);
     glRasterPos3f(v.x,v.y,v.z);
 
     char sx[5];
@@ -74,7 +74,7 @@ void drawArrow(Point v) {
     glVertex3f(v.x, v.y, v.z);
     glVertex3f(v.x+0.1, v.y-0.1, v.z);
     glVertex3f(v.x-0.1, v.y-0.1, v.z);
-    glEnd();
+    //-- glEnd();
 }
 
 
@@ -111,38 +111,39 @@ void Transform::axis(){
     float scale = 10.0;
     float ascale = 2.0;
     glBegin(GL_LINES);
-    glColor3f(1.0,0.0,0.0);
+    // WEDITED glColor3f(1.0,0.0,0.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(scale,0.0,0.0);
-    glColor3f(0.0,1.0,0.0);
+    // WEDITED glColor3f(0.0,1.0,0.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(0.0,scale,0.0);
 
-    glColor3f(0.0,0.0,1.0);
+    // WEDITED glColor3f(0.0,0.0,1.0);
     glVertex3f(0.0,0.0,0.0);
     glVertex3f(0.0,0.0,scale);
-    glEnd();
+    //-- glEnd();
 
     glPushMatrix();
-    glColor3f(1.0,0.0,0.0);
+    // WEDITED glColor3f(1.0,0.0,0.0);
     glTranslatef(scale,0.0,0.0);
     glRotatef(90,0.0,1.0,0.0);
 
     glutSolidCone(ascale/2.0f,ascale,10,10);
     glPopMatrix();
     glPushMatrix();
-    glColor3f(0.0,1.0,0.0);
+    // WEDITED glColor3f(0.0,1.0,0.0);
     glTranslatef(0.0,scale,0.0);
     glRotatef(-90,1.0,0.0,0.0);
     glutSolidCone(ascale/2.0f,ascale,10,10);
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.0,0.0,1.0);
+    // WEDITED glColor3f(0.0,0.0,1.0);
     glTranslatef(0.0,0.0,scale);
     glutSolidCone(ascale/2.0f,ascale,10,10);
     glPopMatrix();
-    glColor3i(1,1,1);
+    // WEDITED
+    // glColor3i(1,1,1);
 
 }
 

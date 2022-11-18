@@ -1,4 +1,4 @@
 mkdir build
 cd build
 emcmake cmake ..
-emmake make
+emmake make -j 8

@@ -169,7 +169,7 @@ void Channel::display(int x, int y, int w, int h) {
             glVertex2f(nx, ny);
             glVertex2f(nx2, ny2);
         }
-        glEnd();
+        //-- glEnd();
     }
 }
 
@@ -191,7 +191,7 @@ void Channel::display(int x, int y, int w, int h) {
    glVertex2f(nx, ny);
    glVertex2f(nx2, ny2);
    }
-   glEnd();
+   //-- glEnd();
    }
    }
    */
@@ -213,7 +213,7 @@ void Channel::display(int x, int y, int w, int h, int begin, float amountx, floa
             glVertex2f(nx, ny);
             glVertex2f(nx2, ny2);
         }
-        glEnd();
+        //-- glEnd();
     }
 }
 void Channel::WriteCHAN(String filename) {
