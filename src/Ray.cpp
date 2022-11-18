@@ -15,7 +15,7 @@ Ray::Ray(int x, int y) {
     winY = float(viewport[3]) - float(y);
     glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
 
-    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+    //- gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
     Point hit = Point();
     Point end = Point(posX, posY, posZ);

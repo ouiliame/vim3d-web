@@ -12,9 +12,15 @@
 //#include <GL/glut.h>
 //#endif
 
-#include "custom_gl/gl.h"
-#include "custom_gl/glu.h"
+#include <gl4esinit.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include "custom_gl/glut.h"
+
+// #include "custom_gl/gl.h"
+// #include "custom_gl/glu.h"
+// #include "custom_gl/glut.h"
 
 #endif
 

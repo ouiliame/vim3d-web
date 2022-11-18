@@ -340,7 +340,7 @@ Point Scene::window2scene(int x, int y) {
     winY = float(viewport[3]) - float(y);
     glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
 
-    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+    //- gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
     Point planeNormal = Point(0,1,0);
     Point planePos = Point(0,0,0);
@@ -636,7 +636,7 @@ void Scene::set2DMode(float x, float y, float w, float h) {
     glMatrixMode(GL_PROJECTION); // Select The Projection Matrix
     glPushMatrix();                  // Store The Projection Matrix
     glLoadIdentity();               // Reset The Projection Matrix
-    gluOrtho2D(x,w,y,h);
+    //- gluOrtho2D(x,w,y,h);
     glMatrixMode(GL_MODELVIEW); // Select The Modelview Matrix
     glPushMatrix();     // Store The Modelview Matrix
     glLoadIdentity();      // Reset The Modelview Matrix
