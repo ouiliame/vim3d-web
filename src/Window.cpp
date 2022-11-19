@@ -150,7 +150,8 @@ void Window::display() {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         if (cam != NULL) {
-            //- gluPerspective(cam->fovy, (GLdouble)w/(GLdouble)h, cam->zNear, cam->zFar);
+            cout << "cam != null ... " << endl;
+            gluPerspective(cam->fovy, (GLdouble)w/(GLdouble)h, cam->zNear, cam->zFar);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();

@@ -4,12 +4,12 @@ project(vim3d CXX)
 
 set(CMAKE_CXX_COMPILER emcc)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g -pthread")
 
 set(CMAKE_SOURCE_DIR src)
 
 file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_SOURCE_DIR}/primitives/*.h ${CMAKE_SOURCE_DIR}/custom_gl/freeglut_std.h)
-file(GLOB SRCFILES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/primitives/*.cpp ${CMAKE_SOURCE_DIR}/custom_gl/freeglut_std.cpp)
+file(GLOB SRCFILES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/primitives/*.cpp ${CMAKE_SOURCE_DIR}/custom_gl/freeglut_std.cpp ${CMAKE_SOURCE_DIR}/custom_gl/glu.cpp)
 
 # include_directories(emscripten/system/include)
 # include_directories(emscripten/system/lib/libcxx/include)
@@ -33,5 +33,5 @@ set_target_properties(
         vim3d
         PROPERTIES
         LINK_FLAGS
-        "-sFULL_ES2=1 -sUSE_PTHREADS=1 -lpthread -lGL -lGLU"
+        "-sFULL_ES2=1 -sUSE_PTHREADS=1 -pthread -lpthread -lGL -lGLU"
 )

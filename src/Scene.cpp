@@ -663,6 +663,7 @@ void Scene::showScene() {
 
 //Display
 void Scene::display() {
+
     // set the background color
     glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], bgcolor[3]);
     /* we must clear the buffer*/
