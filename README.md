@@ -1,5 +1,23 @@
 # vim3d.js - Emscripten port
 
+- [vim3d.js - Emscripten port](#vim3djs---emscripten-port)
+  - [Demo](#demo)
+  - [Development](#development)
+    - [Requirements](#requirements)
+  - [Building the project](#building-the-project)
+  - [Run](#run)
+- [Notes on Porting](#notes-on-porting)
+  - [CMake](#cmake)
+  - [OpenGL](#opengl)
+    - [1. GL4ES for unsupported OpenGL functions](#1-gl4es-for-unsupported-opengl-functions)
+      - [Add to `src/main.cpp`](#add-to-srcmaincpp)
+    - [2. GLUES for missing GLU functions](#2-glues-for-missing-glu-functions)
+      - [`src/OpenGLinc.h`](#srcopenglinch)
+    - [3. FreeGLUT for missing GLUT functions](#3-freeglut-for-missing-glut-functions)
+      - [Undefined symbols](#undefined-symbols)
+        - [GLUT_BITMAP_8_BY_13](#glut_bitmap_8_by_13)
+    - [Modifications to Emscripten's GLUT calls](#modifications-to-emscriptens-glut-calls)
+
 This repository contains the web port of Dan Lynch's [vim3d](https://github.com/pyramation/vim3d), forked off the original repo. I made some changes to the original code to make it work with Emscripten described in the [porting details](#notes-on-porting) part of this document.
 
 ## [Demo](https://ouiliame.github.io/vim3d.js/)
