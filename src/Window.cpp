@@ -42,7 +42,11 @@ Camera * WindowManager::getCamera(int x_, int y_) {
 
 void showWin(Window *w) {w->display();}
 void WindowManager::display(){
-    for_each( windows.begin(), windows.end(), showWin);
+    // unpack loop
+    for(vector<Window *>::iterator cursor = windows.begin(); cursor != windows.end(); cursor++) {
+        Window * w = *cursor;
+        showWin(w);
+    }
 }
 
 void WindowManager::setCamera(Camera * camera) {
@@ -124,9 +128,6 @@ void Window::setSize(int x_, int y_, int w_, int h_) {
     }
 }
 
-#include <iostream>
-using namespace std;
-
 void Window::display() {
 
     if (view == MODEL_VIEW) {
@@ -150,7 +151,6 @@ void Window::display() {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         if (cam != NULL) {
-            cout << "cam != null ... " << endl;
             gluPerspective(cam->fovy, (GLdouble)w/(GLdouble)h, cam->zNear, cam->zFar);
 
             glMatrixMode(GL_MODELVIEW);
@@ -170,7 +170,7 @@ void Window::display() {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
-        //- gluOrtho2D(x,x+w,y,y+h);
+        gluOrtho2D(x,x+w,y,y+h);
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();

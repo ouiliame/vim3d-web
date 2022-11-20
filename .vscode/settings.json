@@ -70,6 +70,9 @@
     "functional": "cpp",
     "iterator": "cpp",
     "utility": "cpp",
-    "glu.h": "c"
+    "glu.h": "c",
+    "gles.h": "c",
+    "logs.h": "c",
+    "loader.h": "c"
   }
 }

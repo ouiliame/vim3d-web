@@ -4,12 +4,18 @@ project(vim3d CXX)
 
 set(CMAKE_CXX_COMPILER emcc)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -Wextra -g -fsanitize=address")
 
 set(CMAKE_SOURCE_DIR src)
 
 file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/*.h ${CMAKE_SOURCE_DIR}/primitives/*.h ${CMAKE_SOURCE_DIR}/custom_gl/freeglut_std.h)
-file(GLOB SRCFILES ${CMAKE_SOURCE_DIR}/*.cpp ${CMAKE_SOURCE_DIR}/primitives/*.cpp ${CMAKE_SOURCE_DIR}/custom_gl/freeglut_std.cpp ${CMAKE_SOURCE_DIR}/custom_gl/glu.cpp)
+file(GLOB SRCFILES 
+        ${CMAKE_SOURCE_DIR}/*.cpp
+        ${CMAKE_SOURCE_DIR}/primitives/*.cpp
+        ${CMAKE_SOURCE_DIR}/custom_gl/freeglut/*.cpp
+        ${CMAKE_SOURCE_DIR}/custom_gl/GLU/*.cpp
+        ${CMAKE_SOURCE_DIR}/custom_gl/glues/*.cpp
+)
 
 # include_directories(emscripten/system/include)
 # include_directories(emscripten/system/lib/libcxx/include)
@@ -27,11 +33,17 @@ add_executable(
         ${SRCFILES}
 )
 
+set(GL_OPTS "-sFULL_ES2=1 -sUSE_PTHREADS=1 -lpthread -lGL -lGLU")
+set(MEMORY_OPTS "-sALLOW_MEMORY_GROWTH=1")
+set(EMRUN_OPTS "-fsanitize=address --emrun -sINITIAL_MEMORY=500mb")
+
 get_filename_component(LIBGL_ABS_PATH "gl4es/lib/libGL.a" ABSOLUTE)
 target_link_libraries(vim3d ${LIBGL_ABS_PATH})
 set_target_properties(
         vim3d
         PROPERTIES
         LINK_FLAGS
-        "-sFULL_ES2=1 -sUSE_PTHREADS=1 -pthread -lpthread -lGL -lGLU"
+        ${GL_OPTS}
+        ${MEMORY_OPTS}
+        ${EMRUN_OPTS}
 )
