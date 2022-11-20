@@ -2,7 +2,7 @@
 
 This repository contains the web port of Dan Lynch's [vim3d](https://github.com/pyramation/vim3d), forked off the original repo. I made some changes to the original code to make it work with Emscripten described in the [porting details](#porting) part of this document.
 
-## Demo
+## [Demo](https://ouiliame.github.io/vim3d.js/)
 
 You can play with the demo [here](https://ouiliame.github.io/vim3d.js/). It comes with a virtual filesystem preloaded with object and scene files from the original vim3d repository.
 
