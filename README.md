@@ -14,6 +14,8 @@ This repository contains the web port of Dan Lynch's [vim3d](https://github.com/
   - [CMake](#cmake)
   - [OpenGL](#opengl)
     - [1. GL4ES for unsupported OpenGL functions](#1-gl4es-for-unsupported-opengl-functions)
+      - [Updating `gl4es/src/raster.c`](#updating-gl4essrcrasterc)
+      - [Linking with GL4ES as libGL](#linking-with-gl4es-as-libgl)
       - [Add to `src/main.cpp`](#add-to-srcmaincpp)
     - [2. GLUES for missing GLU functions](#2-glues-for-missing-glu-functions)
       - [`src/OpenGLinc.h`](#srcopenglinch)
@@ -98,9 +100,54 @@ I decided to use the following libraries to make the port possible:
 
 I used [GL4ES](https://github.com/ptitSeb/gl4es), which maps OpenGL 1.1 calls to OpenGL ES 2.0 calls, to make the code work. (Emscripten only supports the WebGL 2.0 API, which is a subset of OpenGL ES 3.0. [^1]
 
-[1]: See [this](https://emscripten.org/docs/porting/guidelines/function_pointer_issues.html#opengl-and-webgl) for more details.
+[^1]: See [this](https://emscripten.org/docs/porting/guidelines/function_pointer_issues.html#opengl-and-webgl) for more details.
+
+#### Updating `gl4es/src/raster.c`
+
+For some reason the GL state rasters go haywire and cause illegal memory accesses when out of viewport. We add the check:
+
+```diff
+// gl4es/src/raster.c
+...
+void APIENTRY_GL4ES
+gl4es_glBitmap(GLsizei width,
+               GLsizei height,
+               GLfloat xorig,
+               GLfloat yorig,
+               GLfloat xmove,
+               GLfloat ymove,
+               const GLubyte* bitmap)
+{
+    /*printf("glBitmap, xy={%f, %f}, xyorig={%f, %f}, size={%u, %u}, zoom={%f, %f}, viewport={%i,
+       %i, %i, %i}\n", glstate->raster.rPos.x, glstate->raster.rPos.y, xorig, yorig, width, height,
+       glstate->raster.raster_zoomx, glstate->raster.raster_zoomy, glstate->raster.viewport.x,
+       glstate->raster.viewport.y, glstate->raster.viewport.width,
+       glstate->raster.viewport.height);*/
+    // TODO: shouldn't be drawn if the raster pos is outside the viewport?
+    // TODO: negative width/height mirrors bitmap?
+
++   // don't draw if raster pos is outside the viewport
++   if (glstate->raster.rPos.x < glstate->raster.viewport.x ||
++       glstate->raster.rPos.x > glstate->raster.viewport.x + glstate->raster.viewport.width ||
++       glstate->raster.rPos.y < glstate->raster.viewport.y ||
++       glstate->raster.rPos.y > glstate->raster.viewport.y + glstate->raster.viewport.height)
++       return;
+
+    noerrorShim();
+    FLUSH_BEGINEND;
+    if (glstate->list.active) {
+        renderlist_t* list = glstate->list.active;
+        if (!list->bitmaps) {
+...
+```
+
+Then, we rebuild GL4ES with `./build-gl4es.sh`.
+
+#### Linking with GL4ES as libGL
 
 The library is included in `/lib/c/gl4es/libGL.a` and replaces the `-lGL` default.
+
+We also add `-sFULL_ES2=1` to the Emscripten linker flags to target OpenGL ES 2.0.
 
 #### Add to `src/main.cpp`
 
