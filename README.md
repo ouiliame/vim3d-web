@@ -74,27 +74,32 @@ The original code uses an outdated style of writing OpenGL which is not supporte
 
 I decided to use the following libraries to make the port possible:
 
-In `src/OpenGLinc.h`:
-
-```c
-#ifndef OPENGLINC_H
-#define OPENGLINC_H
-
-// remove platform checks, we're on Emscripten
-#include <GL/gl.h>
-#include <GL/glu.h>
-
-// use my fixed GLUT headers
-#include "custom_gl/freeglut/freeglut_std.h"
-
-#endif
-```
-
 ### 1. GL4ES for unsupported OpenGL functions
 
 I used [GL4ES](https://github.com/ptitSeb/gl4es), which maps OpenGL 1.1 calls to OpenGL ES 2.0 calls, to make the code work. (Emscripten only supports the WebGL 2.0 API, which is a subset of OpenGL ES 3.0. [^1]
 
 [1]: See [this](https://emscripten.org/docs/porting/guidelines/function_pointer_issues.html#opengl-and-webgl) for more details.
+
+The library is included in `/lib/c/gl4es/libGL.a` and replaces the `-lGL` default.
+
+#### Add to `src/main.cpp`
+
+We'll need to call `initialize_gl4es()` before an `gl...()` calls.
+
+```diff
+#include "Scene.h"
+
++extern "C" void initialize_gl4es();
+
+int main(int argc, char* argv[]) {
++   initialize_gl4es();
+    Scene *scene = new Scene();
+    scene->go(argc, argv);
+    delete scene;
+    return 0;
+}
+
+```
 
 ### 2. GLUES for missing GLU functions
 
@@ -107,31 +112,16 @@ The library file is included in `lib/js/library_glut.js` with my custom GLUT bin
 #### `src/OpenGLinc.h`
 
 ```cpp
-extern "C" GLint GLAPIENTRY
-mgluBuild2DMipmaps(GLenum target,
-                   GLint internalFormat,
-                   GLsizei width,
-                   GLsizei height,
-                   GLenum format,
-                   GLenum type,
-                   const void* data);
+#ifndef OPENGLINC_H
+#define OPENGLINC_H
 
-extern "C" void GLAPIENTRY
-mgluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
+#include <GL/gl.h>
+#include <GL/glu.h>
+// use my custom glut
+#include "custom_gl/freeglut/freeglut_std.h"
 
-extern "C" void GLAPIENTRY
-mgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
-extern "C" GLAPI GLint GLAPIENTRY
-mgluUnProject(GLdouble winX,
-              GLdouble winY,
-              GLdouble winZ,
-              const GLdouble* model,
-              const GLdouble* proj,
-              const GLint* view,
-              GLdouble* objX,
-              GLdouble* objY,
-              GLdouble* objZ);
+#endif
 ```
 
 ### 3. FreeGLUT for missing GLUT functions
