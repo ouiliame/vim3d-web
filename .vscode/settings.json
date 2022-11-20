@@ -73,6 +73,17 @@
     "glu.h": "c",
     "gles.h": "c",
     "logs.h": "c",
-    "loader.h": "c"
-  }
+    "loader.h": "c",
+    "deque": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "queue": "cpp",
+    "stack": "cpp",
+    "thread": "cpp",
+    "fg_internal.h": "c",
+    "fg_gl2.h": "c",
+    "freeglut_std.h": "c",
+    "filesystem": "cpp"
+  },
+  "C_Cpp.errorSquiggles": "Disabled"
 }

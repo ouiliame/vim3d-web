@@ -1,4 +1,5 @@
 #include "freeglut_std.h"
+#include "fp_geometry.h"
 #include <iostream>
 
 using namespace std;
@@ -787,26 +788,4 @@ glutBitmapCharacter(void* _font, int character)
         glPixelStorei(GL_UNPACK_ALIGNMENT, align);
     }
 #endif
-
-    // cout << "glutBitmapCharacter(" << font << ", " << character << ")" << endl;
-}
-
-XFGAPI void FGAPIENTRY
-glutSolidSphere(GLdouble radius, GLint slices, GLint stacks)
-{
-    cout << "glutSolidSphere(" << radius << ", " << slices << ", " << stacks << ")" << endl;
-}
-
-XFGAPI void FGAPIENTRY
-glutWireCone(GLdouble base, GLdouble height, GLint slices, GLint stacks)
-{
-    cout << "glutWireCone(" << base << ", " << height << ", " << slices << ", " << stacks << ")"
-         << endl;
-}
-
-XFGAPI void FGAPIENTRY
-glutSolidCone(GLdouble base, GLdouble height, GLint slices, GLint stacks)
-{
-    cout << "glutSolidCone(" << base << ", " << height << ", " << slices << ", " << stacks << ")"
-         << endl;
 }

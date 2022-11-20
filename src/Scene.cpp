@@ -828,12 +828,13 @@ Scene::keyboard(unsigned char key, int x, int y)
     /* command line */
     if (key != 0x1B && key != '\r' && (ivMODE & COMMAND_MODE)) {
         /* delete key or backspace */
-        if (key == 0x08 || key == 0x78) {
-            if (Term::buffer.size() > 0)
-                Term::buffer.erase(Term::buffer.end() - 1);
-            glutPostRedisplay();
-            return;
-        }
+        // NOTE: MOVED TO Scene::specialKey
+        // if (key == 0x78) {
+        //     if (Term::buffer.size() > 0)
+        //         Term::buffer.erase(Term::buffer.end() - 1);
+        //     glutPostRedisplay();
+        //     return;
+        // }
         // append char to the buffer!
         Term::buffer.push_back(key);
         glutPostRedisplay();
@@ -1005,6 +1006,7 @@ Scene::keyboard(unsigned char key, int x, int y)
 void
 Scene::specialKey(int key, int x, int y)
 {
+
     switch (key) {
         case 100:
             if (isObject(selOBJ))

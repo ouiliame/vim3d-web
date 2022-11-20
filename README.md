@@ -1,25 +1,10 @@
-# vim3d: Browser Edition
+# vim3d.js - Emscripten port
 
-**NOTE: CURRENTLY A WORK IN PROGRESS!**
+This repository contains the web port of Dan Lynch's [vim3d](https://github.com/pyramation/vim3d), forked off the original repo. I made some changes to the original code to make it work with Emscripten described in the [porting details](#porting) part of this document.
 
-We're trying to bring [vim3d](https://vim3d.com) to the web!
+## Demo
 
-This repository contains the web port of Dan Lynch's [vim3d](https://github.com/pyramation/vim3d), forked off the original repo. 
-
-## Porting Strategy
-
-Since vim3d was written with C++ and OpenGL, our plan is to use [Emscripten](https://emscripten.org) to compile it to WebAssembly and run it in the browser.
-
-However, we will need to resolve a couple challenges:
-
-- **Unsupported OpenGL functions**
-
-  The original code uses some OpenGL functions which aren't available on Emscripten, which only supports the OpenGL ES subset.
-
-
-## Tasks
-
-- [x] replace build system with CMake
+You can play with the demo [here](https://ouiliame.github.io/vim3d.js/).
 
 ## Development
 
@@ -27,7 +12,7 @@ However, we will need to resolve a couple challenges:
 
 To build this project, you will need to install the [Emscripten toolchain](https://emscripten.org/docs/getting_started/downloads.html).
 
-Once installed, you should be able to use `emcc`.  
+Once installed, you should be able to use `emcc`.
 
 ```bash
 $ emcc -v
@@ -44,32 +29,16 @@ Make sure you have the following on your system:
 - `cmake`
 - `make`
 
-### Building the project
+## Building the project
 
-## Get the repo
-
-```bash
-git clone https://github.com/ouiliame/vim3d-web
-cd vim3d-web
-```
-
-We use `gl4es` which is a submodule. After the above, do:
+First, clone this repository.
 
 ```bash
-git submodule update --init --recursive
+git clone https://github.com/ouiliame/vim3d.js.git
+cd vim3d.js
 ```
 
-Then build the `libGL` library.
-
-```bash 
-(cd gl4es && rm -rf build; mkdir build; cd build; emcmake cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DNOX11=ON -DNOEGL=ON -DSTATICLIB=ON; make)
-```
-
-Now you should have `gl4es/lib/libGL.a` in your project, which is required.
-
-## Build
-
-
+Then build:
 
 ```bash
 make build
@@ -83,74 +52,85 @@ This runs with built project with `emrun`. Be sure to redefine the browser to yo
 make run
 ```
 
-## Implementing Unsupported Symbols
+# Notes on Porting
 
-### Using `gl4es`
+The following are notes about the changes I made to the original code to make it work with Emscripten.
 
-We use `gl4es` instead of the default Emscripten bundled `libGL`.
+## CMake
 
-Notice the following:
+Originally, this project was built with a Makefile. I changed it to use CMake, the modern choice of build system for C++ projects, as the build was getting more complex.
 
-#### src/OpenGLinc.h
+I also added a `Makefile` at the root to invoke CMake and build the project.
 
-```cpp
+## OpenGL
+
+The original code uses an outdated style of writing OpenGL which is not supported by Emscripten, which supports only the WebGL subject of the OpenGL ES 2.0 specification.
+
+I decided to use the following libraries to make the port possible:
+
+In `src/OpenGLinc.h`:
+
+```c
 #ifndef OPENGLINC_H
 #define OPENGLINC_H
 
-#include <gl4esinit.h> // include extra
+// remove platform checks, we're on Emscripten
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "custom_gl/glut.h"
+// use my fixed GLUT headers
+#include "custom_gl/freeglut/freeglut_std.h"
 
 #endif
 ```
-#### src/main.cpp
+
+### 1. GL4ES for unsupported OpenGL functions
+
+I used [GL4ES](https://github.com/ptitSeb/gl4es), which maps OpenGL 1.1 calls to OpenGL ES 2.0 calls, to make the code work. (Emscripten only supports the WebGL 2.0 API, which is a subset of OpenGL ES 3.0. [^1]
+
+[1]: See [this](https://emscripten.org/docs/porting/guidelines/function_pointer_issues.html#opengl-and-webgl) for more details.
+
+### 2. GLUES for missing GLU functions
+
+The original code uses several GLU functions which are not supported by Emscripten. Luckily, these are just basic math-related operations that use GL calls described by the GLU specification.
+
+I simply included source files from [GLUES](https://github.com/ptitSeb/glues) in the project, located in the `src/custom_gl/glues` directory.
+
+#### `src/OpenGLinc.h`
 
 ```cpp
-#include "Scene.h"
+extern "C" GLint GLAPIENTRY
+mgluBuild2DMipmaps(GLenum target,
+                   GLint internalFormat,
+                   GLsizei width,
+                   GLsizei height,
+                   GLenum format,
+                   GLenum type,
+                   const void* data);
 
-int main(int argc, char* argv[]) {
-    initialize_gl4es(); // need to call this before any GL calls!
-    Scene *scene = new Scene();
-    scene->go(argc, argv);
-    delete scene;
-    return 0;
-}
+extern "C" void GLAPIENTRY
+mgluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
 
+extern "C" void GLAPIENTRY
+mgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+
+extern "C" GLAPI GLint GLAPIENTRY
+mgluUnProject(GLdouble winX,
+              GLdouble winY,
+              GLdouble winZ,
+              const GLdouble* model,
+              const GLdouble* proj,
+              const GLint* view,
+              GLdouble* objX,
+              GLdouble* objY,
+              GLdouble* objZ);
 ```
 
-### Providing unsupported GLUT functions
+### 3. FreeGLUT for missing GLUT functions
 
-We modify `src/OpenGLinc.h` to use local headers in `src/custom_gl/` forked from [emscripten-core](https://github.com/emscripten-core/emscripten).
+The original code uses GLUT to do various things, such as creating a window, handling keyboard events, etc.
 
-- `<GL/glut.h>` -> `"custom_gl/glut.h"` (actual stuff is imported from `freeglut_std.h`.
+However, Emscripten's GLUT implementation is incomplete and does not support the functions used in the original code.
+Luckily, GLUT is not used for much in the original code, so I was able to just implement the missing functions by referencing the code from [FreeGLUT](https://github.com/FreeGLUTProject/freeglut).
 
-The following functions need to be provided, as they aren't included:
-
-#### src/custom_gl/glu.cpp
-
-```cpp
-GLAPI GLint GLAPIENTRY gluBuild1DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLenum format, GLenum type, const void *data);
-
-GLAPI GLint GLAPIENTRY gluBuild2DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *data); 
-
-
-GLAPI void GLAPIENTRY gluOrtho2D (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top);
-
-GLAPI void GLAPIENTRY gluPerspective (GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-
-GLAPI GLint GLAPIENTRY gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ);
-```
-
-#### src/freeglut_std.<h/cpp>
-
-```cpp
-FGAPI void FGAPIENTRY glutBitmapCharacter(void *_font, int character);
-
-FGAPI void FGAPIENTRY glutSolidSphere(GLdouble radius, GLint slices, GLint stacks);
-
-FGAPI void FGAPIENTRY glutWireCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
-
-FGAPI void FGAPIENTRY glutSolidCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
-```
+### Modifications to Emscripten's GLUT

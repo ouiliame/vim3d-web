@@ -4,7 +4,7 @@ project(vim3d CXX)
 
 set(CMAKE_CXX_COMPILER emcc)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -Wextra -g -fsanitize=address")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -Wall -Wextra -g")
 
 set(CMAKE_SOURCE_DIR src)
 
@@ -22,8 +22,11 @@ file(GLOB SRCFILES
 # include_directories(emscripten/system/lib/libc/musl/include)
 # include_directories(emscripten/system/lib/libc/musl/arch/emscripten)
 # include_directories(emscripten/system/lib/libc/musl/arch/generic)
-include_directories(gl4es/include)
+include_directories(include)
 
+file(COPY objects DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY scenes DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY lib DESTINATION ${CMAKE_BINARY_DIR})
 
 set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
@@ -33,17 +36,17 @@ add_executable(
         ${SRCFILES}
 )
 
-set(GL_OPTS "-sFULL_ES2=1 -sUSE_PTHREADS=1 -lpthread -lGL -lGLU")
+set(GL_OPTS "-sMAX_WEBGL_VERSION=2 -sFULL_ES2=1")
+set(LIB_OPTS "-lGL -lGLU --js-library lib/js/library_glut.js")
 set(MEMORY_OPTS "-sALLOW_MEMORY_GROWTH=1")
-set(EMRUN_OPTS "-fsanitize=address --emrun -sINITIAL_MEMORY=500mb")
+set(LOAD_FILES "--embed-file objects --embed-file scenes")
+set(EMCC_LINK_OPTS "${GL_OPTS} ${MEMORY_OPTS} ${EMRUN_OPTS} ${LOAD_FILES} ${LIB_OPTS}")
 
-get_filename_component(LIBGL_ABS_PATH "gl4es/lib/libGL.a" ABSOLUTE)
+get_filename_component(LIBGL_ABS_PATH "lib/c/libGL.a" ABSOLUTE)
 target_link_libraries(vim3d ${LIBGL_ABS_PATH})
 set_target_properties(
         vim3d
         PROPERTIES
         LINK_FLAGS
-        ${GL_OPTS}
-        ${MEMORY_OPTS}
-        ${EMRUN_OPTS}
+        ${EMCC_LINK_OPTS}
 )

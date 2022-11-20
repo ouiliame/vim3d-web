@@ -33,21 +33,33 @@
 #include "glues_project.h"
 #include <math.h>
 
-
 /*
 ** Make m an identity matrix
 */
 
-static void __gluMakeIdentityf(GLfloat m[16])
+static void
+__gluMakeIdentityd(GLdouble m[16])
 {
-    m[0+4*0] = 1; m[0+4*1] = 0; m[0+4*2] = 0; m[0+4*3] = 0;
-    m[1+4*0] = 0; m[1+4*1] = 1; m[1+4*2] = 0; m[1+4*3] = 0;
-    m[2+4*0] = 0; m[2+4*1] = 0; m[2+4*2] = 1; m[2+4*3] = 0;
-    m[3+4*0] = 0; m[3+4*1] = 0; m[3+4*2] = 0; m[3+4*3] = 1;
+    m[0 + 4 * 0] = 1;
+    m[0 + 4 * 1] = 0;
+    m[0 + 4 * 2] = 0;
+    m[0 + 4 * 3] = 0;
+    m[1 + 4 * 0] = 0;
+    m[1 + 4 * 1] = 1;
+    m[1 + 4 * 2] = 0;
+    m[1 + 4 * 3] = 0;
+    m[2 + 4 * 0] = 0;
+    m[2 + 4 * 1] = 0;
+    m[2 + 4 * 2] = 1;
+    m[2 + 4 * 3] = 0;
+    m[3 + 4 * 0] = 0;
+    m[3 + 4 * 1] = 0;
+    m[3 + 4 * 2] = 0;
+    m[3 + 4 * 3] = 1;
 }
 
 GLAPI void APIENTRY
-gluOrtho2D(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top)
+gluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
 {
     glOrtho(left, right, bottom, top, -1, 1);
 }
@@ -55,59 +67,65 @@ gluOrtho2D(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top)
 #define __glPi 3.14159265358979323846
 
 GLAPI void APIENTRY
-gluPerspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar)
+gluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
 {
-    GLfloat m[4][4];
-    GLfloat sine, cotangent, deltaZ;
-    GLfloat radians=(GLfloat)(fovy/2.0f*__glPi/180.0f);
+    GLdouble m[4][4];
+    GLdouble sine, cotangent, deltaZ;
+    GLdouble radians = (GLdouble)(fovy / 2.0f * __glPi / 180.0f);
 
-    deltaZ=zFar-zNear;
-    sine=(GLfloat)sin(radians);
-    if ((deltaZ==0.0f) || (sine==0.0f) || (aspect==0.0f))
-    {
+    deltaZ = zFar - zNear;
+    sine = (GLdouble)sin(radians);
+    if ((deltaZ == 0.0f) || (sine == 0.0f) || (aspect == 0.0f)) {
         return;
     }
-    cotangent=(GLfloat)(cos(radians)/sine);
+    cotangent = (GLdouble)(cos(radians) / sine);
 
-    __gluMakeIdentityf(&m[0][0]);
+    __gluMakeIdentityd(&m[0][0]);
     m[0][0] = cotangent / aspect;
     m[1][1] = cotangent;
     m[2][2] = -(zFar + zNear) / deltaZ;
     m[2][3] = -1.0f;
     m[3][2] = -2.0f * zNear * zFar / deltaZ;
     m[3][3] = 0;
-    glMultMatrixf(&m[0][0]);
+    glMultMatrixd(&m[0][0]);
 }
 
-static void normalize(GLfloat v[3])
+static void
+normalize(GLdouble v[3])
 {
-    GLfloat r;
+    GLdouble r;
 
-    r=(GLfloat)sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-    if (r==0.0f)
-    {
+    r = (GLdouble)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    if (r == 0.0f) {
         return;
     }
 
-    v[0]/=r;
-    v[1]/=r;
-    v[2]/=r;
+    v[0] /= r;
+    v[1] /= r;
+    v[2] /= r;
 }
 
-static void cross(GLfloat v1[3], GLfloat v2[3], GLfloat result[3])
+static void
+cross(GLdouble v1[3], GLdouble v2[3], GLdouble result[3])
 {
-    result[0] = v1[1]*v2[2] - v1[2]*v2[1];
-    result[1] = v1[2]*v2[0] - v1[0]*v2[2];
-    result[2] = v1[0]*v2[1] - v1[1]*v2[0];
+    result[0] = v1[1] * v2[2] - v1[2] * v2[1];
+    result[1] = v1[2] * v2[0] - v1[0] * v2[2];
+    result[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
 GLAPI void APIENTRY
-gluLookAt(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
-          GLfloat centery, GLfloat centerz, GLfloat upx, GLfloat upy,
-          GLfloat upz)
+gluLookAt(GLdouble eyex,
+          GLdouble eyey,
+          GLdouble eyez,
+          GLdouble centerx,
+          GLdouble centery,
+          GLdouble centerz,
+          GLdouble upx,
+          GLdouble upy,
+          GLdouble upz)
 {
-    GLfloat forward[3], side[3], up[3];
-    GLfloat m[4][4];
+    GLdouble forward[3], side[3], up[3];
+    GLdouble m[4][4];
 
     forward[0] = centerx - eyex;
     forward[1] = centery - eyey;
@@ -126,7 +144,7 @@ gluLookAt(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
     /* Recompute up as: up = side x forward */
     cross(side, forward, up);
 
-    __gluMakeIdentityf(&m[0][0]);
+    __gluMakeIdentityd(&m[0][0]);
     m[0][0] = side[0];
     m[1][0] = side[1];
     m[2][0] = side[2];
@@ -139,21 +157,18 @@ gluLookAt(GLfloat eyex, GLfloat eyey, GLfloat eyez, GLfloat centerx,
     m[1][2] = -forward[1];
     m[2][2] = -forward[2];
 
-    glMultMatrixf(&m[0][0]);
-    glTranslatef(-eyex, -eyey, -eyez);
+    glMultMatrixd(&m[0][0]);
+    glTranslated(-eyex, -eyey, -eyez);
 }
 
-static void __gluMultMatrixVecf(const GLfloat matrix[16], const GLfloat in[4],
-                                GLfloat out[4])
+static void
+__gluMultMatrixVecf(const GLdouble matrix[16], const GLdouble in[4], GLdouble out[4])
 {
     int i;
 
-    for (i=0; i<4; i++)
-    {
-        out[i] = in[0] * matrix[0*4+i] +
-                 in[1] * matrix[1*4+i] +
-                 in[2] * matrix[2*4+i] +
-                 in[3] * matrix[3*4+i];
+    for (i = 0; i < 4; i++) {
+        out[i] = in[0] * matrix[0 * 4 + i] + in[1] * matrix[1 * 4 + i] + in[2] * matrix[2 * 4 + i] +
+                 in[3] * matrix[3 * 4 + i];
     }
 }
 
@@ -161,49 +176,50 @@ static void __gluMultMatrixVecf(const GLfloat matrix[16], const GLfloat in[4],
 ** Invert 4x4 matrix.
 ** Contributed by David Moore (See Mesa bug #6748)
 */
-static int __gluInvertMatrixf(const GLfloat m[16], GLfloat invOut[16])
+static int
+__gluInvertMatrixf(const GLdouble m[16], GLdouble invOut[16])
 {
-    GLfloat inv[16], det;
+    GLdouble inv[16], det;
     int i;
 
-    inv[0] =   m[5]*m[10]*m[15] - m[5]*m[11]*m[14] - m[9]*m[6]*m[15]
-             + m[9]*m[7]*m[14] + m[13]*m[6]*m[11] - m[13]*m[7]*m[10];
-    inv[4] =  -m[4]*m[10]*m[15] + m[4]*m[11]*m[14] + m[8]*m[6]*m[15]
-             - m[8]*m[7]*m[14] - m[12]*m[6]*m[11] + m[12]*m[7]*m[10];
-    inv[8] =   m[4]*m[9]*m[15] - m[4]*m[11]*m[13] - m[8]*m[5]*m[15]
-             + m[8]*m[7]*m[13] + m[12]*m[5]*m[11] - m[12]*m[7]*m[9];
-    inv[12] = -m[4]*m[9]*m[14] + m[4]*m[10]*m[13] + m[8]*m[5]*m[14]
-             - m[8]*m[6]*m[13] - m[12]*m[5]*m[10] + m[12]*m[6]*m[9];
-    inv[1] =  -m[1]*m[10]*m[15] + m[1]*m[11]*m[14] + m[9]*m[2]*m[15]
-             - m[9]*m[3]*m[14] - m[13]*m[2]*m[11] + m[13]*m[3]*m[10];
-    inv[5] =   m[0]*m[10]*m[15] - m[0]*m[11]*m[14] - m[8]*m[2]*m[15]
-             + m[8]*m[3]*m[14] + m[12]*m[2]*m[11] - m[12]*m[3]*m[10];
-    inv[9] =  -m[0]*m[9]*m[15] + m[0]*m[11]*m[13] + m[8]*m[1]*m[15]
-             - m[8]*m[3]*m[13] - m[12]*m[1]*m[11] + m[12]*m[3]*m[9];
-    inv[13] =  m[0]*m[9]*m[14] - m[0]*m[10]*m[13] - m[8]*m[1]*m[14]
-             + m[8]*m[2]*m[13] + m[12]*m[1]*m[10] - m[12]*m[2]*m[9];
-    inv[2] =   m[1]*m[6]*m[15] - m[1]*m[7]*m[14] - m[5]*m[2]*m[15]
-             + m[5]*m[3]*m[14] + m[13]*m[2]*m[7] - m[13]*m[3]*m[6];
-    inv[6] =  -m[0]*m[6]*m[15] + m[0]*m[7]*m[14] + m[4]*m[2]*m[15]
-             - m[4]*m[3]*m[14] - m[12]*m[2]*m[7] + m[12]*m[3]*m[6];
-    inv[10] =  m[0]*m[5]*m[15] - m[0]*m[7]*m[13] - m[4]*m[1]*m[15]
-             + m[4]*m[3]*m[13] + m[12]*m[1]*m[7] - m[12]*m[3]*m[5];
-    inv[14] = -m[0]*m[5]*m[14] + m[0]*m[6]*m[13] + m[4]*m[1]*m[14]
-             - m[4]*m[2]*m[13] - m[12]*m[1]*m[6] + m[12]*m[2]*m[5];
-    inv[3] =  -m[1]*m[6]*m[11] + m[1]*m[7]*m[10] + m[5]*m[2]*m[11]
-             - m[5]*m[3]*m[10] - m[9]*m[2]*m[7] + m[9]*m[3]*m[6];
-    inv[7] =   m[0]*m[6]*m[11] - m[0]*m[7]*m[10] - m[4]*m[2]*m[11]
-             + m[4]*m[3]*m[10] + m[8]*m[2]*m[7] - m[8]*m[3]*m[6];
-    inv[11] = -m[0]*m[5]*m[11] + m[0]*m[7]*m[9] + m[4]*m[1]*m[11]
-             - m[4]*m[3]*m[9] - m[8]*m[1]*m[7] + m[8]*m[3]*m[5];
-    inv[15] =  m[0]*m[5]*m[10] - m[0]*m[6]*m[9] - m[4]*m[1]*m[10]
-             + m[4]*m[2]*m[9] + m[8]*m[1]*m[6] - m[8]*m[2]*m[5];
+    inv[0] = m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[9] * m[6] * m[15] +
+             m[9] * m[7] * m[14] + m[13] * m[6] * m[11] - m[13] * m[7] * m[10];
+    inv[4] = -m[4] * m[10] * m[15] + m[4] * m[11] * m[14] + m[8] * m[6] * m[15] -
+             m[8] * m[7] * m[14] - m[12] * m[6] * m[11] + m[12] * m[7] * m[10];
+    inv[8] = m[4] * m[9] * m[15] - m[4] * m[11] * m[13] - m[8] * m[5] * m[15] +
+             m[8] * m[7] * m[13] + m[12] * m[5] * m[11] - m[12] * m[7] * m[9];
+    inv[12] = -m[4] * m[9] * m[14] + m[4] * m[10] * m[13] + m[8] * m[5] * m[14] -
+              m[8] * m[6] * m[13] - m[12] * m[5] * m[10] + m[12] * m[6] * m[9];
+    inv[1] = -m[1] * m[10] * m[15] + m[1] * m[11] * m[14] + m[9] * m[2] * m[15] -
+             m[9] * m[3] * m[14] - m[13] * m[2] * m[11] + m[13] * m[3] * m[10];
+    inv[5] = m[0] * m[10] * m[15] - m[0] * m[11] * m[14] - m[8] * m[2] * m[15] +
+             m[8] * m[3] * m[14] + m[12] * m[2] * m[11] - m[12] * m[3] * m[10];
+    inv[9] = -m[0] * m[9] * m[15] + m[0] * m[11] * m[13] + m[8] * m[1] * m[15] -
+             m[8] * m[3] * m[13] - m[12] * m[1] * m[11] + m[12] * m[3] * m[9];
+    inv[13] = m[0] * m[9] * m[14] - m[0] * m[10] * m[13] - m[8] * m[1] * m[14] +
+              m[8] * m[2] * m[13] + m[12] * m[1] * m[10] - m[12] * m[2] * m[9];
+    inv[2] = m[1] * m[6] * m[15] - m[1] * m[7] * m[14] - m[5] * m[2] * m[15] + m[5] * m[3] * m[14] +
+             m[13] * m[2] * m[7] - m[13] * m[3] * m[6];
+    inv[6] = -m[0] * m[6] * m[15] + m[0] * m[7] * m[14] + m[4] * m[2] * m[15] -
+             m[4] * m[3] * m[14] - m[12] * m[2] * m[7] + m[12] * m[3] * m[6];
+    inv[10] = m[0] * m[5] * m[15] - m[0] * m[7] * m[13] - m[4] * m[1] * m[15] +
+              m[4] * m[3] * m[13] + m[12] * m[1] * m[7] - m[12] * m[3] * m[5];
+    inv[14] = -m[0] * m[5] * m[14] + m[0] * m[6] * m[13] + m[4] * m[1] * m[14] -
+              m[4] * m[2] * m[13] - m[12] * m[1] * m[6] + m[12] * m[2] * m[5];
+    inv[3] = -m[1] * m[6] * m[11] + m[1] * m[7] * m[10] + m[5] * m[2] * m[11] -
+             m[5] * m[3] * m[10] - m[9] * m[2] * m[7] + m[9] * m[3] * m[6];
+    inv[7] = m[0] * m[6] * m[11] - m[0] * m[7] * m[10] - m[4] * m[2] * m[11] + m[4] * m[3] * m[10] +
+             m[8] * m[2] * m[7] - m[8] * m[3] * m[6];
+    inv[11] = -m[0] * m[5] * m[11] + m[0] * m[7] * m[9] + m[4] * m[1] * m[11] - m[4] * m[3] * m[9] -
+              m[8] * m[1] * m[7] + m[8] * m[3] * m[5];
+    inv[15] = m[0] * m[5] * m[10] - m[0] * m[6] * m[9] - m[4] * m[1] * m[10] + m[4] * m[2] * m[9] +
+              m[8] * m[1] * m[6] - m[8] * m[2] * m[5];
 
-    det = m[0]*inv[0] + m[1]*inv[4] + m[2]*inv[8] + m[3]*inv[12];
+    det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
     if (det == 0)
         return GL_FALSE;
 
-    det=1.0f/det;
+    det = 1.0f / det;
 
     for (i = 0; i < 16; i++)
         invOut[i] = inv[i] * det;
@@ -211,84 +227,88 @@ static int __gluInvertMatrixf(const GLfloat m[16], GLfloat invOut[16])
     return GL_TRUE;
 }
 
-static void __gluMultMatricesf(const GLfloat a[16], const GLfloat b[16],
-                               GLfloat r[16])
+static void
+__gluMultMatricesf(const GLdouble a[16], const GLdouble b[16], GLdouble r[16])
 {
     int i, j;
 
-    for (i = 0; i < 4; i++)
-    {
-        for (j = 0; j < 4; j++)
-        {
-            r[i*4+j] = a[i*4+0]*b[0*4+j] +
-                       a[i*4+1]*b[1*4+j] +
-                       a[i*4+2]*b[2*4+j] +
-                       a[i*4+3]*b[3*4+j];
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            r[i * 4 + j] = a[i * 4 + 0] * b[0 * 4 + j] + a[i * 4 + 1] * b[1 * 4 + j] +
+                           a[i * 4 + 2] * b[2 * 4 + j] + a[i * 4 + 3] * b[3 * 4 + j];
         }
     }
 }
 
 GLAPI GLint APIENTRY
-gluProject(GLfloat objx, GLfloat objy, GLfloat objz, 
-           const GLfloat modelMatrix[16], 
-           const GLfloat projMatrix[16],
+gluProject(GLdouble objx,
+           GLdouble objy,
+           GLdouble objz,
+           const GLdouble modelMatrix[16],
+           const GLdouble projMatrix[16],
            const GLint viewport[4],
-           GLfloat* winx, GLfloat* winy, GLfloat* winz)
+           GLdouble* winx,
+           GLdouble* winy,
+           GLdouble* winz)
 {
-    GLfloat in[4];
-    GLfloat out[4];
+    GLdouble in[4];
+    GLdouble out[4];
 
-    in[0]=objx;
-    in[1]=objy;
-    in[2]=objz;
-    in[3]=1.0;
+    in[0] = objx;
+    in[1] = objy;
+    in[2] = objz;
+    in[3] = 1.0;
     __gluMultMatrixVecf(modelMatrix, in, out);
     __gluMultMatrixVecf(projMatrix, out, in);
-    if (in[3] == 0.0)
-    {
-        return(GL_FALSE);
+    if (in[3] == 0.0) {
+        return (GL_FALSE);
     }
 
-    in[0]/=in[3];
-    in[1]/=in[3];
-    in[2]/=in[3];
+    in[0] /= in[3];
+    in[1] /= in[3];
+    in[2] /= in[3];
     /* Map x, y and z to range 0-1 */
-    in[0]=in[0]*0.5f+0.5f;
-    in[1]=in[1]*0.5f+0.5f;
-    in[2]=in[2]*0.5f+0.5f;
+    in[0] = in[0] * 0.5f + 0.5f;
+    in[1] = in[1] * 0.5f + 0.5f;
+    in[2] = in[2] * 0.5f + 0.5f;
 
     /* Map x,y to viewport */
-    in[0]=in[0] * viewport[2] + viewport[0];
-    in[1]=in[1] * viewport[3] + viewport[1];
+    in[0] = in[0] * viewport[2] + viewport[0];
+    in[1] = in[1] * viewport[3] + viewport[1];
 
-    *winx=in[0];
-    *winy=in[1];
-    *winz=in[2];
+    *winx = in[0];
+    *winy = in[1];
+    *winz = in[2];
 
-    return(GL_TRUE);
+    return (GL_TRUE);
 }
 
+#include <stdio.h>
+
 GLAPI GLint APIENTRY
-gluUnProject(GLfloat winx, GLfloat winy, GLfloat winz,
-             const GLfloat modelMatrix[16], 
-             const GLfloat projMatrix[16],
+gluUnProject(GLdouble winx,
+             GLdouble winy,
+             GLdouble winz,
+             const GLdouble modelMatrix[16],
+             const GLdouble projMatrix[16],
              const GLint viewport[4],
-             GLfloat* objx, GLfloat* objy, GLfloat* objz)
+             GLdouble* objx,
+             GLdouble* objy,
+             GLdouble* objz)
 {
-    GLfloat finalMatrix[16];
-    GLfloat in[4];
-    GLfloat out[4];
+    GLdouble finalMatrix[16];
+    GLdouble in[4];
+    GLdouble out[4];
 
     __gluMultMatricesf(modelMatrix, projMatrix, finalMatrix);
-    if (!__gluInvertMatrixf(finalMatrix, finalMatrix))
-    {
-        return(GL_FALSE);
+    if (!__gluInvertMatrixf(finalMatrix, finalMatrix)) {
+        return (GL_FALSE);
     }
 
-    in[0]=winx;
-    in[1]=winy;
-    in[2]=winz;
-    in[3]=1.0;
+    in[0] = winx;
+    in[1] = winy;
+    in[2] = winz;
+    in[3] = 1.0;
 
     /* Map x and y from window coordinates */
     in[0] = (in[0] - viewport[0]) / viewport[2];
@@ -300,9 +320,8 @@ gluUnProject(GLfloat winx, GLfloat winy, GLfloat winz,
     in[2] = in[2] * 2 - 1;
 
     __gluMultMatrixVecf(finalMatrix, in, out);
-    if (out[3] == 0.0)
-    {
-        return(GL_FALSE);
+    if (out[3] == 0.0) {
+        return (GL_FALSE);
     }
 
     out[0] /= out[3];
@@ -312,32 +331,37 @@ gluUnProject(GLfloat winx, GLfloat winy, GLfloat winz,
     *objy = out[1];
     *objz = out[2];
 
-    return(GL_TRUE);
+    return (GL_TRUE);
 }
 
 GLAPI GLint APIENTRY
-gluUnProject4(GLfloat winx, GLfloat winy, GLfloat winz, GLfloat clipw,
-              const GLfloat modelMatrix[16],
-              const GLfloat projMatrix[16],
+gluUnProject4(GLdouble winx,
+              GLdouble winy,
+              GLdouble winz,
+              GLdouble clipw,
+              const GLdouble modelMatrix[16],
+              const GLdouble projMatrix[16],
               const GLint viewport[4],
-              GLclampf nearVal, GLclampf farVal,
-              GLfloat *objx, GLfloat *objy, GLfloat *objz,
-              GLfloat *objw)
+              GLclampf nearVal,
+              GLclampf farVal,
+              GLdouble* objx,
+              GLdouble* objy,
+              GLdouble* objz,
+              GLdouble* objw)
 {
-    GLfloat finalMatrix[16];
-    GLfloat in[4];
-    GLfloat out[4];
+    GLdouble finalMatrix[16];
+    GLdouble in[4];
+    GLdouble out[4];
 
     __gluMultMatricesf(modelMatrix, projMatrix, finalMatrix);
-    if (!__gluInvertMatrixf(finalMatrix, finalMatrix))
-    {
-        return(GL_FALSE);
+    if (!__gluInvertMatrixf(finalMatrix, finalMatrix)) {
+        return (GL_FALSE);
     }
 
-    in[0]=winx;
-    in[1]=winy;
-    in[2]=winz;
-    in[3]=clipw;
+    in[0] = winx;
+    in[1] = winy;
+    in[2] = winz;
+    in[3] = clipw;
 
     /* Map x and y from window coordinates */
     in[0] = (in[0] - viewport[0]) / viewport[2];
@@ -350,9 +374,8 @@ gluUnProject4(GLfloat winx, GLfloat winy, GLfloat winz, GLfloat clipw,
     in[2] = in[2] * 2 - 1;
 
     __gluMultMatrixVecf(finalMatrix, in, out);
-    if (out[3] == 0.0)
-    {
-        return(GL_FALSE);
+    if (out[3] == 0.0) {
+        return (GL_FALSE);
     }
 
     *objx = out[0];
@@ -360,20 +383,19 @@ gluUnProject4(GLfloat winx, GLfloat winy, GLfloat winz, GLfloat clipw,
     *objz = out[2];
     *objw = out[3];
 
-    return(GL_TRUE);
+    return (GL_TRUE);
 }
 
 GLAPI void APIENTRY
-gluPickMatrix(GLfloat x, GLfloat y, GLfloat deltax, GLfloat deltay,
-              GLint viewport[4])
+gluPickMatrix(GLdouble x, GLdouble y, GLdouble deltax, GLdouble deltay, GLint viewport[4])
 {
-    if (deltax <= 0 || deltay <= 0)
-    {
+    if (deltax <= 0 || deltay <= 0) {
         return;
     }
 
     /* Translate and scale the picked region to the entire window */
     glTranslatef((viewport[2] - 2 * (x - viewport[0])) / deltax,
-                 (viewport[3] - 2 * (y - viewport[1])) / deltay, 0);
+                 (viewport[3] - 2 * (y - viewport[1])) / deltay,
+                 0);
     glScalef(viewport[2] / deltax, viewport[3] / deltay, 1.0);
 }

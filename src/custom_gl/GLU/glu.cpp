@@ -4,22 +4,32 @@
 
 using namespace std;
 
-// GLAPI GLint GLAPIENTRY gluBuild1DMipmaps (GLenum target, GLint internalFormat, GLsizei width, GLenum format, GLenum type, const void *data) {
-//     cout << "gluBuild1DMipmaps(" << target << ", " << internalFormat << ", " << width << ", " << format << ", " << type << ", " << data << ")" << endl;
-//     return 0;
+// GLAPI GLint GLAPIENTRY gluBuild1DMipmaps (GLenum target, GLint internalFormat, GLsizei width,
+// GLenum format, GLenum type, const void *data) {
+//     cout << "gluBuild1DMipmaps(" << target << ", " << internalFormat << ", " << width << ", " <<
+//     format << ", " << type << ", " << data << ")" << endl; return 0;
 // }
 
-extern "C" GLint GLAPIENTRY mgluBuild2DMipmaps(GLenum target, GLint internalFormat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *data)
+extern "C" GLint GLAPIENTRY
+mgluBuild2DMipmaps(GLenum target,
+                   GLint internalFormat,
+                   GLsizei width,
+                   GLsizei height,
+                   GLenum format,
+                   GLenum type,
+                   const void* data)
 {
     return gluBuild2DMipmaps(target, internalFormat, width, height, format, type, data);
 }
 
-extern "C" void GLAPIENTRY mgluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
+extern "C" void GLAPIENTRY
+mgluOrtho2D(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
 {
     return glOrtho(left, right, bottom, top, -1, 1);
 }
 
-extern "C" void GLAPIENTRY mgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
+extern "C" void GLAPIENTRY
+mgluPerspective(GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar)
 {
     const GLdouble pi = 3.1415926535897932384626433832795;
     GLdouble fW, fH;
@@ -31,6 +41,16 @@ extern "C" void GLAPIENTRY mgluPerspective(GLdouble fovy, GLdouble aspect, GLdou
     return glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 }
 
-extern "C" GLAPI GLint GLAPIENTRY mgluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ) {
+extern "C" GLAPI GLint GLAPIENTRY
+mgluUnProject(GLdouble winX,
+              GLdouble winY,
+              GLdouble winZ,
+              const GLdouble* model,
+              const GLdouble* proj,
+              const GLint* view,
+              GLdouble* objX,
+              GLdouble* objY,
+              GLdouble* objZ)
+{
     return gluUnProject(winX, winY, winZ, model, proj, view, objX, objY, objZ);
 }
