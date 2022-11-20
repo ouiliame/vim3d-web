@@ -4,7 +4,13 @@ This repository contains the web port of Dan Lynch's [vim3d](https://github.com/
 
 ## Demo
 
-You can play with the demo [here](https://ouiliame.github.io/vim3d.js/).
+You can play with the demo [here](https://ouiliame.github.io/vim3d.js/). It comes with a virtual filesystem preloaded with object and scene files from the original vim3d repository.
+
+- **Open an object:** `:open objects/cube.obj`
+
+- **Load a scene:** `:load scenes/gyroscope`
+
+<img src="./animation.gif" width="100%">
 
 ## Development
 
