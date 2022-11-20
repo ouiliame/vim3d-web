@@ -96,6 +96,8 @@ The original code uses several GLU functions which are not supported by Emscript
 
 I simply included source files from [GLUES](https://github.com/ptitSeb/glues) in the project, located in the `src/custom_gl/glues` directory.
 
+The library file is included in `lib/js/library_glut.js` with my custom GLUT bindings is located in `src/custom_gl/freeglut`.
+
 #### `src/OpenGLinc.h`
 
 ```cpp
@@ -133,4 +135,61 @@ The original code uses GLUT to do various things, such as creating a window, han
 However, Emscripten's GLUT implementation is incomplete and does not support the functions used in the original code.
 Luckily, GLUT is not used for much in the original code, so I was able to just implement the missing functions by referencing the code from [FreeGLUT](https://github.com/FreeGLUTProject/freeglut).
 
-### Modifications to Emscripten's GLUT
+The source files are located in the `src/custom_gl/freeglut` directory.
+
+#### Undefined symbols
+
+The original code uses `<GL/glut.h>` which Emscripten resolves to its included FreeGLUT headers. However, this header does not define all items used by the original code, so I had to add the following to `src/OpenGLinc.h`:
+
+##### GLUT_BITMAP_8_BY_13
+
+Originally, the code does something like:
+
+```diff
+void
+Scene::printOutput(String& buffer, float w, float h)
+{
+
+    int newLine = 0;
+    glRasterPos2f(w, h);
+    const char* s = buffer.c_str();
+    for (unsigned int j = 0; j < buffer.size(); j++, s++) {
+        if (*s == '\n') {
+            newLine += 15;
++            glRasterPos2f(w, h - newLine);
+        } else {
++            glutBitmapCharacter(GLUT_BITMAP_8_BY_13, *s);
+        }
+    }
+}
+```
+
+This patterns is found in several places in the code -- used for writing text to the screen.
+
+However, Using Emscripten's FreeGLUT headers does not define `GLUT_BITMAP_8_BY_13`, it expects these symbols to be defined by the user. I defined them in `src/custom_gl/freeglut/freeglut_std.h`:
+
+```diff
+// somewhere in src/custom_gl/freeglut/freeglut_std.h ...
+...
+#define GLUT_STROKE_ROMAN ((void*)0x0000)
+#define GLUT_STROKE_MONO_ROMAN ((void*)0x0001)
+#define GLUT_BITMAP_9_BY_15 ((void*)0x0002)
++#define GLUT_BITMAP_8_BY_13 ((void*)0x0003)
+#define GLUT_BITMAP_TIMES_ROMAN_10 ((void*)0x0004)
+#define GLUT_BITMAP_TIMES_ROMAN_24 ((void*)0x0005)
+...
+```
+
+**NOTE:** I don't actually use `GLUT_BITMAP_8_BY_13` in the code, here I just got rid of the undefined symbol error. I decided to inline the font data instead, which is what I did in the next section.
+
+In order to write to the screen, the code uses `glRasterPos2f` to set the position of the cursor, and then uses `glutBitmapCharacter` to write a character at that position.
+
+See `glutBitmapCharacter` in `src/custom_gl/freeglut/freeglut_std.cpp` for implementation details.
+
+### Modifications to Emscripten's GLUT calls
+
+I discovered, while verifying on Firefox, that keyboard events were being handled differently than in Chrome.
+
+In particular, the keyCode for `:` (colon) was being reported as `186` in Chrome, but `59` in Firefox.
+
+I made the changes to `Scene::keyboard` in `src/Scene.cpp` to handle both cases.
